@@ -7,7 +7,6 @@ COPY tsconfig.json ./
 COPY prisma ./
 COPY index.ts ./
 COPY sources ./
-COPY .env ./
 
 
 RUN bun install
