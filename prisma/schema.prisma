@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String       @id @default(uuid())
+  username  String    @unique
+  email     String    @unique
+  avatar    String    @default("default-avatar.jpg")
+  createdAt DateTime  @default(now())
+
+
+  pass      Pass?
+  lawyer    Lawyer?
+  
+  queries Query[]
+}
+
+model Pass {
+  userId    String       @unique
+  user      User      @relation(fields: [userId], references: [id])
+  data      String
+}
+
+
+model Lawyer{
+  userId String @unique
+  user User @relation(fields: [userId], references: [id])
+  firstName String
+  lastName String
+
+  services String[]
+
+  queries Query[]
+}
+
+model Query{
+  queryId Int @unique @default(autoincrement())
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  lawyerId String
+  lawyer Lawyer @relation(fields: [lawyerId], references: [userId])
+  
+  context String
+
+  active Boolean @default(true)
+
+  @@unique([userId, lawyerId])
+}
+
+
+
+model Logins{
+  key String @unique
+  userId Int
+  createdAt DateTime @default(now())
+  lastUsed DateTime
+}
