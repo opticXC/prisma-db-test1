@@ -1,4 +1,5 @@
 FROM oven/bun:latest
+WORKDIR /app
 
 COPY package.json ./
 COPY bun.lockb ./
@@ -6,12 +7,15 @@ COPY tsconfig.json ./
 COPY prisma ./
 COPY index.ts ./
 COPY sources ./
+COPY .env ./
+
 
 RUN bun install
-RUN bunx prisma generate
+RUN bun prisma generate
 
 COPY . .
-EXPOSE 8000 8080 3000 5432 
+EXPOSE 8000
+EXPOSE 5435
 
 
 ENTRYPOINT [ "bun", "index.ts" ]
