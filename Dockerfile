@@ -1,15 +1,15 @@
 FROM oven/bun:latest
 
-WORKDIR /app
 
-COPY package*.json ./package.json
-COPY bun.lockb ./bun.lockb
-COPY sources ./sources
-COPY prisma ./prisma
+COPY package.json ./
+COPY bun.lockb ./
+COPY sources ./
+COPY prisma ./prisma/
 
 RUN bun install
-RUN bun x prisma generate
+RUN bun x prisma generate --schema ./prisma/schema.prisma
 COPY . .
+
 
 EXPOSE 8080
 
