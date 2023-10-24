@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "module": "index.ts",
+  "module": "sources/index.ts",
   "type": "module",
   "devDependencies": {
     "bun-types": "latest"
@@ -22,6 +22,7 @@
     "prisma": "^5.4.2"
   },
   "scripts": {
-    "dev": "bun run --watch index.ts"
+    "dev": "bun run --watch sources/index.ts",
+    "start":  "bun run sources/index.ts"
   }
 }
