@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN bun install
+RUN bun prisma generate
 COPY . .
 
 
-CMD [ "bun", "soures/index.ts" ]
+CMD [ "bun", "sources/index.ts" ]
