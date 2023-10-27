@@ -1,16 +1,24 @@
-FROM oven/bun:latest
+# Development stage
+FROM node:18 as development
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
+COPY tsconfig.json ./
+COPY prisma ./
+RUN npx prisma generate
+COPY ./src ./
+CMD [ "npm", "run", "start" ]
+
+# Builder stage
+FROM development as builder
+WORKDIR /usr/src/app
+# Build the app with devDependencies still installed from "development" stage
+RUN npm run setup
 
 
-COPY package.json ./
-COPY bun.lockb ./
-COPY sources ./
-COPY prisma ./prisma/
-
-RUN bun install
-RUN bun x prisma generate --schema ./prisma/schema.prisma
-COPY . .
-
-
-EXPOSE 8080
-
-CMD [ "bun", "run", "sources/index.ts" ]
+# Production stage
+FROM alpine:latest as production
+RUN apk --no-cache add nodejs ca-certificates
+WORKDIR /root/
+COPY --from=builder /usr/src/app ./
+CMD [ "npm", "run", "start" ]

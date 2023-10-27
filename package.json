@@ -1,9 +1,10 @@
 {
   "name": "server",
-  "module": "sources/index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "typescript": "^5.2.2"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -22,7 +23,9 @@
     "prisma": "^5.4.2"
   },
   "scripts": {
-    "dev": "bun run --watch sources/index.ts",
-    "start":  "bun run sources/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "setup": "npx prisma generate",
+    "generate": "npx tsc",
+    "start": "npm run generate && node prod/index.js"
   }
 }

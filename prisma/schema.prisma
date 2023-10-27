@@ -43,7 +43,7 @@ model Lawyer{
 }
 
 model Query{
-  queryId Int @unique @id @default(autoincrement())
+  id Int @unique @id @default(autoincrement())
 
   userId String
   user User @relation(fields: [userId], references: [id])
@@ -53,7 +53,7 @@ model Query{
   
   context String
 
-  active Boolean @default(true)
+  status Int @default(0)
   
   createdAt DateTime @default(now())
 
