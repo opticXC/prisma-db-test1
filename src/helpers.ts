@@ -1,5 +1,5 @@
-import {QueryStatus, prisma} from "./commons.js";
-import { password_hash } from "./crypt.js";
+import {QueryStatus, prisma} from "./commons";
+import { password_hash } from "./crypt";
 
 
 export async function getUser(req:any,res:any) {

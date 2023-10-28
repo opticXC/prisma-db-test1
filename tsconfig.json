@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "target": "ES6",
-    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "bundler",
     "moduleDetection": "force",
-    "noEmit": false,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "composite": true,
     "strict": true,
     "downlevelIteration": true,
@@ -15,9 +17,6 @@
     "allowJs": true,
     "types": [
       "bun-types" // add Bun global
-    ],
-
-    "rootDir": "./src",
-    "outDir": "./prod"
+    ]
   }
 }

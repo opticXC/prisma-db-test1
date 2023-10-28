@@ -1,5 +1,5 @@
-import {port,public_url,prisma} from './commons.js'
-import { checkPass, createQuery, createUser, deleteAccount, getQuery, getUser, registerLawyer, updatePass } from './helpers.js'
+import {port,public_url,prisma} from './commons'
+import { checkPass, createQuery, createUser, deleteAccount, getQuery, getUser, registerLawyer, updatePass } from './helpers'
 
 import express from 'express'
 
