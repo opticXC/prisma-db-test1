@@ -14,7 +14,7 @@ export const prisma = new PrismaClient();
 
 export enum QueryStatus{
     NotAccepted = 0,
-    Active = 1,
+    Open = 1,
 
     Absolved = 98,
     Closed = 100,

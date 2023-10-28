@@ -24,6 +24,7 @@
   },
   "scripts": {
     "dev": "bun run --hot src/index.ts",
+    "bun": "npx bun",
     "setup": "bun x  prisma generate",
     "deploy": "bun run src/index.ts",
     "start": "bun run setup && bun deploy"
