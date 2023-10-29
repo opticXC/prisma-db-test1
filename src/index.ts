@@ -29,7 +29,7 @@ app.use(
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.sendStatus(200).json({ body: "Online" });
+    res.sendStatus(ResponseCodes.OK);
 });
 
 app.get("/user/:username", async (req, res) => {

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client/edge";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -6,7 +6,7 @@ export const port = process.env.PORT || 8080;
 export const public_url = process.env.PUBLIC_URL || "http://localhost";
 
 export const prisma = new PrismaClient();
-export { User, Lawyer, Query, Pass, Logins } from "@prisma/client";
+export { User, Lawyer, Query } from "@prisma/client/edge";
 
 export enum QueryStatus {
     NotAccepted = 0,
