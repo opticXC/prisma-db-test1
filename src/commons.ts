@@ -1,16 +1,14 @@
-
-import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv'
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
 dotenv.config();
 
 export const port = process.env.PORT || 8080;
-export const public_url = process.env.PUBLIC_URL || "http://localhost"
+export const public_url = process.env.PUBLIC_URL || "http://localhost";
 
 export const prisma = new PrismaClient();
-export {User, Lawyer, Query, Pass, Logins} from '@prisma/client';
+export { User, Lawyer, Query, Pass, Logins } from "@prisma/client";
 
-
-export enum QueryStatus{
+export enum QueryStatus {
     NotAccepted = 0,
     Open = 1,
 
@@ -20,21 +18,18 @@ export enum QueryStatus{
     Orphaned = 999,
 }
 
-
-export enum ResponseCodes{
+export enum ResponseCodes {
     OK = 200,
     CREATED,
-    NOCONTENT=204,
+    NOCONTENT = 204,
 
     BADREQUEST = 400,
     UNAUTHORISED = 401,
     FORBIDDEN = 403,
     NOTFOUND = 404,
     CONFLICT = 409,
-    
 
     INTERNALSERVERERROR = 500,
-
 }
 
 export interface Result<T> {

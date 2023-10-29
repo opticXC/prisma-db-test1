@@ -1,32 +1,32 @@
 {
-  "name": "server",
-  "module": "src/index.ts",
-  "type": "module",
-  "devDependencies": {
-    "bun-types": "latest",
-    "typescript": "^5.2.2"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.4.2",
-    "@types/cors": "^2.8.15",
-    "@types/express": "^4.17.20",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "crypto": "^1.0.1",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
-    "prisma": "^5.4.2"
-  },
-  "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "bun": "npx bun",
-    "setup": "bun x  prisma generate",
-    "deploy": "bun run src/index.ts",
-    "start": "bun run setup && bun deploy"
-  }
+    "name": "server",
+    "module": "src/index.ts",
+    "type": "module",
+    "devDependencies": {
+        "bun-types": "latest",
+        "typescript": "^5.2.2"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@prisma/client": "^5.4.2",
+        "@types/cors": "^2.8.15",
+        "@types/express": "^4.17.20",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "crypto": "^1.0.1",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.2",
+        "multer": "^1.4.5-lts.1",
+        "prisma": "^5.4.2"
+    },
+    "scripts": {
+        "dev": "bun run --hot src/index.ts",
+        "bun": "npx bun",
+        "setup": "bun x  prisma generate",
+        "deploy": "bun run src/index.ts",
+        "start": "bun run setup && bun deploy"
+    }
 }
