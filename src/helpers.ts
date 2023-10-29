@@ -1,9 +1,8 @@
-import {QueryStatus, prisma} from "./commons";
+import {Lawyer, Query, QueryStatus, ResponseCodes, Result, User, prisma} from "./commons";
 import { password_hash } from "./crypt";
 
 
-export async function getUser(req:any,res:any) {
-    const {username} = req.params;
+export async function getUser(username:string): Promise<Result<User>> {
     const data = await prisma.user.findUnique({
         where:{
             username:username
@@ -13,21 +12,13 @@ export async function getUser(req:any,res:any) {
             lawyer:true,
         }
     })
-    if (data==null){
-        res.appendHeader("Content-Type", "application/json");
-        return res.sendStatus(404).json({body:"User not found"})
-    }else{
-        res.appendHeader("Content-Type", "application/json");
-        return res.json(data);
-    }
+    return {responseCode:ResponseCodes.OK,data};
 }
 
-export async function createUser(req:any,res:any){
-    const { username, email, pass } = req.body;
-
+export async function createUser(username:string,email:string,pass:string):Promise<Result<User>>{
     const check = await prisma.user.findUnique({where:{username:username}})
     if (check != null){
-        return res.sendStatus(409);
+        return {responseCode:ResponseCodes.CONFLICT, data:null};
     }
     const data = await prisma.user.create({
         data:{
@@ -35,21 +26,16 @@ export async function createUser(req:any,res:any){
             email: email,
         }
     })
-
     const ps = await prisma.pass.create({
         data: {
             userId: data.id,
             data: password_hash(pass)
         }
     });
-
-
-    res.appendHeader("Content-Type", "application/json");
-    res.json(data);
+    return {responseCode:ResponseCodes.OK, data:data};
 }
 
-export async function deleteAccount(req:any, res:any) {
-    const {id} = req.body;
+export async function deleteAccount(id:string):Promise<ResponseCodes> {
     const check = await prisma.user.findUnique({
         where:{
             id:id,
@@ -60,7 +46,7 @@ export async function deleteAccount(req:any, res:any) {
         }
     })
     if (check  == null){
-        return res.sendStatus(404);
+        return ResponseCodes.NOTFOUND;
     }else{
         if (check.lawyer != null){
             await prisma.query.updateMany({
@@ -77,8 +63,7 @@ export async function deleteAccount(req:any, res:any) {
                 }
             })
 
-        };
-        
+        }; 
         await prisma.query.updateMany({
             where:{userId:id},
             data: {status:QueryStatus.Orphaned}
@@ -91,34 +76,32 @@ export async function deleteAccount(req:any, res:any) {
         });
 
     }
-
+    return ResponseCodes.OK;
 }
 
 
 
-export async function checkPass(req:any, res:any){
-    const {id, pass} = req.body;
+export async function checkPass(id:string,pass:string): Promise<ResponseCodes>{
     const check = await prisma.pass.findUnique({
         where:{
             userId: id,
         }
     });
-    if (check == null) return res.sendStatus(404);
+    if (check == null) return ResponseCodes.NOTFOUND;
 
-    else if (password_hash(pass) == check.data) return res.sendStatus(200);
+    else if (password_hash(pass) == check.data) return ResponseCodes.OK;
     
-    else return res.sendStatus(404);
+    else return ResponseCodes.UNAUTHORISED;
 }
 
-export async function updatePass(req:any,res:any){
-    const {id, pass} = req.body;
+export async function updatePass(id:string, pass:string):Promise<ResponseCodes>{
     const ps = await prisma.pass.findUnique({
         where:{
             userId:id
         }
     });
     if (ps == null){
-        return res.sendStatus(404);
+        return ResponseCodes.NOTFOUND;
     }else{
         await prisma.pass.update({
             where:{
@@ -129,13 +112,19 @@ export async function updatePass(req:any,res:any){
             }
         })
 
-        res.sendStatus(200);
+        return ResponseCodes.OK;
     }
 }
 
 
-export async function registerLawyer(req:any,res:any){
-    const {id, firstName, lastName, services} = req.body;
+export async function registerLawyer(id:string, firstName:string, lastName:string, services:string[]):Promise<Result<Lawyer>>{
+    const check = await prisma.lawyer.findUnique({
+        where:{
+            userId: id,
+        }
+    });
+    if (check != null) return {responseCode:ResponseCodes.CONFLICT, data:null}
+
     const lyr = await prisma.lawyer.create({
         data:{
             userId:id,
@@ -147,13 +136,30 @@ export async function registerLawyer(req:any,res:any){
             queries:true,
         }
     })
-
-    return res.json(lyr);
+    return {responseCode:ResponseCodes.OK, data:lyr};
 }
 
-export async function createQuery(req:any,res:any){
-    const {userId, lawyerId, context} = req.body;
+export async function getLawyer(username:string):Promise<Result<Lawyer>>{
+    const check = await getUser(username);
+    if (check.data == null){
+        return {responseCode:ResponseCodes.NOTFOUND, data:null};
+    }
+    const lyr = await prisma.lawyer.findUnique({
+        where:{
+            userId: check.data.id,
+        },
+        include:{
+            user:true,
+            queries:true,
+        }
+    })    
 
+    return {responseCode:ResponseCodes.OK, data:lyr};
+}
+
+
+
+export async function createQuery(userId:string,lawyerId:string,context:string):Promise<Result<Query>> {
     const check = await prisma.query.findMany({
         where:{
             userId:userId,
@@ -162,7 +168,8 @@ export async function createQuery(req:any,res:any){
     })
 
     if (check.length > 0){
-        return res.sendStatus(409)
+        return {responseCode:ResponseCodes.FORBIDDEN, data:null}
+
     }else{
         const qry = await prisma.query.create({
             data:{
@@ -172,13 +179,12 @@ export async function createQuery(req:any,res:any){
             }
         })
 
-        return res.json(qry);
+        return {responseCode:ResponseCodes.OK, data:qry}
     }
 }
 
 
-export async function getQuery(req:any, res:any) {
-    const {id} = req.params;
+export async function getQuery(id:number):Promise<Result<Query>> {
     const check = await prisma.query.findUnique({
         where:{
             id:id,
@@ -190,29 +196,30 @@ export async function getQuery(req:any, res:any) {
     });
 
     if (check == null){
-        return res.sendStatus(404);
+        return {responseCode:ResponseCodes.NOTFOUND, data:null};
+
     }else{
-        return res.json(check);
+        return {responseCode:ResponseCodes.OK, data:check};
     }
 }
 
-export async function updateQuery(req:any, res:any){
-    const {id, status} = req.body;
-    const qry = await prisma.query.findUnique({
+export async function updateQuery(id:number, status:QueryStatus):Promise<Result<Query>>{
+    const check = await prisma.query.findUnique({
         where:{
             id:id
         }
     });
-    if (qry == null){
-        return res.sendStatus(404);
+    if (check == null){
+        return {responseCode:ResponseCodes.NOTFOUND, data:null};
     }else{
-        prisma.query.update({
+        const n_qry = await prisma.query.update({
             where:{
                 id:id
             },
             data:{
                 status:status
-            }
+            },
         })
+        return {responseCode:ResponseCodes.OK, data:n_qry};
     }
 }
